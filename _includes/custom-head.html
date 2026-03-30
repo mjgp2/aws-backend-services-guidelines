@@ -1,0 +1,83 @@
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (!window.mermaid) return;
+
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: "loose",
+      theme: "default"
+    });
+
+    const blocks = document.querySelectorAll("pre code.language-mermaid");
+
+    for (const block of blocks) {
+      const wrapper = block.closest(".highlighter-rouge") || block.parentElement;
+      if (!wrapper || wrapper.dataset.mermaidRendered === "true") continue;
+
+      const container = document.createElement("div");
+      container.className = "mermaid";
+      container.textContent = block.textContent || "";
+
+      wrapper.dataset.mermaidRendered = "true";
+      wrapper.replaceWith(container);
+    }
+
+    mermaid.run({
+      nodes: document.querySelectorAll(".mermaid")
+    });
+
+    for (const svg of document.querySelectorAll(".mermaid svg")) {
+      svg.removeAttribute("width");
+      svg.removeAttribute("height");
+      svg.style.width = "100%";
+      svg.style.maxWidth = "100%";
+      svg.style.height = "auto";
+      svg.style.display = "block";
+    }
+  });
+</script>
+
+<style>
+  .site-title {
+    font-size: 2rem;
+    letter-spacing: -0.03em;
+  }
+
+  .site-nav .page-link {
+    font-size: 1.05rem;
+  }
+
+  .post-title {
+    font-size: 2.75rem;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-content h2 {
+    font-size: 2.1rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-top: 2.5rem;
+  }
+
+  .post-content h3 {
+    font-size: 1.55rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-top: 1.75rem;
+  }
+
+  .mermaid {
+    overflow-x: auto;
+    margin: 2rem 0;
+  }
+
+  .mermaid svg {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

@@ -1,0 +1,16 @@
+title: Backend Service Design Guidelines
+description: Opinionated backend architecture, software, infrastructure, database, and object-storage guidelines for AWS-based services.
+theme: minima
+markdown: kramdown
+
+header_pages:
+  - architecture.md
+  - networking.md
+  - delivery.md
+  - auth.md
+  - software.md
+  - infra.md
+  - ops.md
+  - database.md
+  - s3.md
+  - new-service-checklist.md
