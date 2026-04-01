@@ -120,13 +120,14 @@ Example environment summary:
 ## NAT Warning
 
 NAT gateways are easy to add and easy to forget about. They are also an easy
-way for a young environment to burn real money on baseline networking.
+way for a young environment to burn real money on baseline networking. The
+practical rule is simple: avoid pushing unnecessary bytes through NAT because
+it is expensive.
 
 - treat NAT posture as an explicit cost decision, not a default checkbox
-- use an S3 gateway endpoint by default so ordinary S3 traffic does not pay NAT
-  egress tax
-- add interface endpoints only when they are cheaper or operationally better
-  than the NAT traffic they replace
+- use an S3 gateway endpoint by default so routine S3 traffic stays off NAT
+- add interface endpoints when they keep enough AWS API traffic off NAT to be
+  cheaper, or when the operational isolation is worth the extra cost
 - NAT can still be the right answer when third-party systems or customer
   firewalls need a fixed outbound source IP to allowlist
 - a single shared NAT is often the right default for low-risk environments

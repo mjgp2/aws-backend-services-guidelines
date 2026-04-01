@@ -15,6 +15,11 @@ I default to it because most startup backends need:
 - mature tooling and operator familiarity
 - enough flexibility to support both product data and workflow coordination
 
+Aurora also gives a practical managed-service upside: storage and compute are
+decoupled, scaling readers and writers is easier than with self-managed
+PostgreSQL, and zero-ETL integrations give you a cleaner path into analytics
+without bolting bespoke pipelines onto the transactional database.
+
 A different datastore should be chosen only when the workload clearly does not
 fit PostgreSQL.
 
