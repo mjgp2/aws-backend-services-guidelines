@@ -83,6 +83,8 @@ flowchart TD
 - If the product needs near-immediate revocation, forced logout, or device
   session control, pair short access-token TTLs with a stateful revocation or
   session lookup.
+- If you issue refresh tokens, rotate them on use and still give them a short
+  absolute TTL as a backstop.
 - Pure stateless JWT verification is a good default for many APIs, but it is
   not a full session-management system.
 

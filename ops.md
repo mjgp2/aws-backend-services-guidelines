@@ -59,8 +59,6 @@ without alerting on it is only partial instrumentation.
 Infrastructure and runtimes should assume processes will die, tasks will be
 rescheduled, and messages will be delivered more than once.
 
-Required posture:
-
 - API and worker tasks must tolerate restarts without manual cleanup
 - background handlers must be idempotent or converge safely under duplicate
   delivery
@@ -100,14 +98,9 @@ incomplete.
 - make noisy-tenant protection explicit for multi-tenant APIs and background
   workflows
 
-Launch-readiness acceptance criteria:
-
-- each shared bottleneck has an explicit fairness dimension, for example tenant,
-  principal, workflow, queue, or export job
-- the service defines what happens on quota breach, for example `429`, defer,
-  shed, or operator intervention
-- if the team is intentionally shipping without fairness controls, that decision
-  is explicit in the tech design rather than accidental omission
+Before launch, I want three things written down: the fairness dimension for
+each shared bottleneck, what happens on quota breach, and whether the team is
+consciously shipping without fairness controls.
 
 ### 2.5 Define backup and restore posture up front
 
@@ -152,13 +145,10 @@ Minimum default posture:
 - investigate unexpected spend changes with the same seriousness as backlog,
   error-rate, or saturation anomalies
 
-Launch-readiness acceptance criteria:
-
-- each production service has a named spend owner
-- the service has an expected spend envelope, even if it is rough at first
-- at least one budget or anomaly alert exists and routes to that owner
-- spend is attributable to the service and environment through tags or
-  equivalent metadata
+Before launch, every production service needs a named spend owner, a rough
+spend envelope, at least one budget or anomaly alert routed to that owner, and
+enough tags or equivalent metadata that the bill can be attributed back to the
+service and environment.
 
 ## 3. Launch-Readiness Requirements
 

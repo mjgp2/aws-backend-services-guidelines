@@ -31,6 +31,8 @@ is ready for first production launch.
       cache, and clock-skew defaults.
 - [ ] Service-to-service auth uses explicit caller identity, not shared static
       credentials.
+- [ ] A basic threat model exists: who the attackers are, what the crown
+      jewels are, and the blast radius of a credential leak.
 - [ ] The service has zero application-managed AWS access keys by default.
 - [ ] If operator access is needed, bastion or shell access is through SSM or an
       equivalent audited path, not open inbound admin ports. If ECS Exec is

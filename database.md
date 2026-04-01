@@ -70,8 +70,6 @@ over the same indexes and vacuum budget.
 
 ### 3.3 Prefer append-only history and HOT-friendly live state
 
-Default posture:
-
 - favor append-only tables for audit history, immutable events, and immutable
 derived records
 - favor HOT-friendly updates for mutable operational state that genuinely needs
@@ -217,6 +215,10 @@ ownership inside that cluster
 - scale reads with replicas only for paths that tolerate replica lag
 - keep read-routing explicit; do not send correctness-critical reads to replicas
   unless the product semantics clearly tolerate stale data
+- when read traffic splits into materially different classes, a valid Aurora
+  pattern is to put different replicas behind different custom endpoints, for
+  example one subset for production reads and another for analytics or operator
+  traffic
 - use replicas to protect the writer from analytics, read-heavy APIs, and
   operator/reporting traffic before scaling the writer forever
 - measure replica lag and fail back to the writer or degrade gracefully when
@@ -327,8 +329,6 @@ Recommended defaults:
 
 Detailed S3 policy lives in [S3](./s3/).
 
-These patterns reduce operational surprises as volume grows.
-
 ## 6. When Aurora PostgreSQL Is Not The Right Default
 
 Consider another datastore when the dominant workload is:
@@ -346,31 +346,17 @@ If a service needs very fast key-value access, short-lived coordination state,
 or cache-backed read shedding, Redis through ElastiCache is a good companion
 pattern.
 
-This is a good fit when:
+Use Redis for cache, short-lived coordination, rate limits, sessions, and
+other state you can rebuild or afford to lose. Do not use it for durable
+product state, relational integrity, or anything that falls apart when cache
+entries disappear during eviction or failover. The mistake teams keep making is
+turning Redis into an unowned dumping ground for arbitrary application state
+and then acting surprised when missing invalidation rules become a production
+incident.
 
-- the data is cacheable, regenerable, or otherwise not the primary system of
-  record
-- sub-millisecond or very low-latency key-value access matters materially
-- the service needs short-lived session, token, lease, rate-limit, or
-  coordination state
-- the goal is to protect Aurora from repetitive hot reads rather than replace
-  it as the transactional source of truth
-
-This is not a good fit when:
-
-- the data requires relational integrity or durable transactional guarantees
-- the system cannot tolerate cache loss, eviction, or failover semantics
-- teams are using Redis as an unowned dumping ground for arbitrary application
-  state
-
-Default posture:
-
-- keep Aurora PostgreSQL as the canonical source of truth for durable product
-  state unless the workload clearly says otherwise
-- use Redis for cache, short-lived coordination, rate limits, or ephemeral
-  operational state
-- define cache fill, expiry, and invalidation rules explicitly rather than
-  treating Redis as magic shared memory
+Keep Aurora PostgreSQL as the canonical source of truth unless the workload
+clearly says otherwise, and define cache fill, expiry, and invalidation rules
+up front instead of treating Redis as magic shared memory.
 
 ## 6.2 Reporting and analytics pattern: Aurora zero-ETL to Redshift
 
@@ -379,32 +365,16 @@ keeping Aurora PostgreSQL as the transactional source of truth and consider
 Aurora zero-ETL integration into Amazon Redshift before inventing bespoke CDC
 pipelines or pushing analytical workloads onto the primary database.
 
-This is a good fit when:
+Use zero-ETL to Redshift when reporting has turned into read-heavy
+aggregation, dashboard load, warehouse-style joins, or historical analysis
+that should not be beating on the transactional database. Keep Aurora as the
+operational system of record and move only the analytical pressure.
 
-- reporting queries are read-heavy, aggregation-heavy, or dashboard-oriented
-- near-real-time replication is sufficient
-- the goal is to protect the transactional database from analytical load
-- warehouse-style joins, historical analysis, or BI tooling matter more than
-serving product control-plane requests directly
-
-This is not the default for ordinary backend services, and it is not a good
-fit when:
-
-- product-serving queries can stay inside Aurora with normal indexes and read
-replicas
-- replication requires in-flight transformation rather than raw replication
-- source tables do not have stable primary keys
-- the design needs the replicated Redshift database to be writable
-- the team is not prepared to manage a second data platform for analytics
-- cross-region analytics replication is a hard requirement from day one
-
-Default posture:
-
-- keep Aurora PostgreSQL as the operational system of record
-- move reporting and analytics pressure to Redshift only when the workload
-justifies another data platform
-- keep the zero-ETL scope narrow and intentional, replicating the tables needed
-for analytics rather than treating Redshift as a second operational database
-
-For these guidelines, zero-ETL to Redshift is a good optional reporting
-pattern, not a baseline dependency for every service.
+This is not the default for ordinary services. If product-serving queries still
+fit inside Aurora with normal indexes and read replicas, stay there. If the
+replication path needs in-flight transformation, the source tables do not have
+stable primary keys, the replicated Redshift database needs to be writable, the
+team is not ready to run a second data platform, or cross-region analytics
+replication is a hard requirement on day one, this is the wrong tool. Keep the
+replicated scope narrow and deliberate; Redshift is not your second
+operational database.

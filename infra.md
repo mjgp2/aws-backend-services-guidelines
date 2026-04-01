@@ -129,18 +129,19 @@ SQS queues are the default tool for:
 - workflows that benefit from retries and isolation
 - fan-out or burst smoothing
 
-Queue design rules:
+Queue ownership should follow one service or domain boundary. Do not make
+unrelated domains share one queue and then fight over retries, DLQs, ordering,
+and runbooks. If multiple producers send to one queue, one owning domain still
+has to define the payload contract, compatibility rules, and operator runbook.
 
-- keep queue ownership aligned with a single service or domain boundary
-- do not make unrelated domains share one queue and then fight over retries,
-  DLQs, ordering, and runbooks
-- if multiple producers send to one queue, one owning domain must still define
-  the payload contract, compatibility rules, and operator runbook
-- it is fine for one domain to own multiple queues when workflows need
-  different retention, ordering, throughput, retry, or DLQ behavior
-- split worker classes, and usually queues with them, when workloads need
-  materially different concurrency, timeout, IAM, dependency, cost, or
-  failure-isolation characteristics
+Split queues when the work is materially different. If workflows need
+different retention, ordering, throughput, retry, DLQ behavior, concurrency,
+timeout, IAM, dependency, cost, failure isolation, or SLOs, give them
+different worker classes and usually different queues. If two workloads have
+different SLOs, splitting the queues is required. One domain can own several
+queues without creating a mess; one overstuffed queue with a muddy contract is
+the mess.
+
 - assume at-least-once delivery; idempotent consumers, bounded retries, and a
   DLQ are part of the default
 - keep messages small and durable; store payloads in S3 if they are large
@@ -180,15 +181,10 @@ The diagram view of this release flow lives in [Delivery](./delivery/).
 - Service repositories should declare intent and service-specific inputs, not
   rebuild platform scaffolding from scratch.
 
-This reduces configuration drift and prevents each team from inventing a
-slightly different production stack.
-
 ### 3.4.1 Build once and deploy the same artifact
 
 The release unit should be a tested artifact for one service, not the moving
 state of a branch.
-
-Default posture:
 
 - build one deployable artifact per service runtime
 - promote that same artifact through environments
@@ -357,8 +353,6 @@ Every service should have explicit guardrails for:
 Fargate Spot is a good default cost optimization for worker-style runtimes and a
 conditional optimization for APIs, but it should not be treated as free
 capacity with no interruption cost.
-
-Default posture:
 
 - prefer mixed capacity providers rather than Spot-only production services
 - keep an on-demand base for services that must stay available during Spot

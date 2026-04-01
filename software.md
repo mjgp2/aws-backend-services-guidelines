@@ -275,7 +275,7 @@ Typical tools:
 - transactional outbox writes
 - compare-and-set state transitions
 
-Launch-readiness acceptance criteria:
+Before launch, idempotency cannot be hand-wavy:
 
 - every externally retried mutation, queue handler, webhook consumer, and
   reconciliation loop has a named idempotency strategy
@@ -369,10 +369,11 @@ Do not accept silent fallback behavior for production-critical settings.
 - Multiple producers are acceptable only when one owning domain defines the
   queue contract, idempotency model, and operational runbook.
 - One service may own multiple queues when different workflows need different
-  retry, ordering, throughput, retention, or DLQ behavior.
+  retry, ordering, throughput, retention, DLQ behavior, or SLOs.
 - Split worker classes, and usually queues with them, when jobs need materially
   different concurrency, timeout, dependency, permission, or failure-isolation
-  characteristics.
+  characteristics. If jobs have different SLOs, splitting the queues is
+  required.
 - Workers should own queue consumption and scheduled maintenance loops.
 - Publishing a background task that depends on committed DB state should use an
   outbox or equivalent reliability mechanism.

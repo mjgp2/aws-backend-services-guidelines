@@ -84,14 +84,18 @@ flowchart TD
   console edits that drift away from the intended network design.
 - Keep routes, peerings, and security-group ingress narrow and explicit.
 
-Launch-readiness acceptance criteria:
+Once you outgrow a small number of per-environment VPC peerings, stop adding
+more spaghetti. Transit Gateway is usually the right answer when multiple VPCs
+need predictable routing and policy without turning every environment
+connection into its own little networking project.
+
+Before launch, there should be no ambiguity about the network skeleton:
 
 - the environment account, VPC CIDR, and per-AZ subnet CIDRs are chosen
   intentionally before launch
 - NAT posture is explicit, for example single shared NAT or same-AZ NAT
-- interface endpoints are an explicit yes or no decision, not an accidental
-  omission
-- flow logs are an explicit yes or no decision, not an accidental omission
+- interface endpoints are either deliberately in or deliberately out
+- flow logs are enabled for a reason or left off on purpose
 - long-lived runtimes have no public IPs
 - security-group ingress is reviewed as part of the network design, with deny
   as the default posture, and infrastructure-as-code is the normal change path
@@ -136,7 +140,6 @@ it is expensive.
 
 If a team cannot explain why it is paying for its NAT layout, the design is not
 finished yet.
-
 
 ## Related Guidance
 
