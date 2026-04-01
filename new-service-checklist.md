@@ -62,6 +62,9 @@ is ready for first production launch.
       production.
 - [ ] Dashboards and alarms exist for API health, worker health, queue health,
       and database health.
+- [ ] Alert routing separates paging alarms from business-hours alarms, for
+      example with two SNS topics or channels: one for wake-people-up alerts
+      and one for next-business-day alerts.
 - [ ] DLQs, queue backlog alarms, and replay or re-drive ownership are defined.
 - [ ] Fairness or quota controls are explicit for any shared bottleneck, or the
       decision to defer them is recorded explicitly.

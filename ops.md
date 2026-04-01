@@ -184,6 +184,8 @@ Every production service should have:
 Incident-management baseline:
 
 - a paging path for production-impacting alarms
+- separate alert-routing channels, for example two SNS topics: one for
+  wake-people-up alerts and one for next-business-day alerts
 - severity levels and escalation expectations that are understood by operators
 - a named primary responder for production alarms during the service's stated
   support window
