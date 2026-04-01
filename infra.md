@@ -189,6 +189,8 @@ state of a branch.
 - build one deployable artifact per service runtime
 - promote that same artifact through environments
 - pin deployments to immutable artifacts such as image digests, not just tags
+- make artifact tags content-hash based so identical inputs produce the same
+  artifact identity and a stack refresh becomes a no-op when nothing changed
 - keep release, rollback, and approval boundaries aligned with the service
   boundary
 
@@ -218,15 +220,21 @@ shape is:
 1. build and publish one immutable artifact set for the service, including the
    runtime and, where needed, a dedicated migration artifact
 2. authenticate to AWS through an OIDC-assumed deployment role
-3. run additive database migrations as a one-shot ECS/Fargate task before
+3. update the migration stack's artifact metadata parameter, for example an SSM
+   parameter holding the migration image URI or digest
+4. refresh the migration stack and wait for it to succeed
+5. run additive database migrations as a one-shot ECS/Fargate task before
    rolling workers or APIs when schema changes are part of the release
-4. update the runtime's artifact metadata parameter, for example an SSM
-   parameter holding the image URI or digest
-5. refresh the runtime stack so the infrastructure layer rolls the service to
-   that artifact
+6. update the worker stack's artifact metadata parameter, for example an SSM
+   parameter holding the worker image URI or digest
+7. refresh the worker stack and wait for it to succeed
+8. update the API stack's artifact metadata parameter, for example an SSM
+   parameter holding the API image URI or digest
+9. refresh the API stack and wait for it to succeed
 
 This pattern keeps the infrastructure definition stable while letting operators
-or automation promote new artifacts safely.
+or automation promote new artifacts safely. If the parameter still points at
+the same content-hash artifact, the refresh should be a no-op.
 
 Rollback should use the same mechanism in reverse: point the metadata parameter
 back to a known-good artifact and refresh the affected stack.
@@ -235,15 +243,20 @@ If migrations are packaged separately, they should still be built, versioned,
 qualified, and promoted as part of the same service release set.
 
 For AWS container platforms, the default execution model should be a dedicated
-one-shot ECS/Fargate task for the migration artifact, not migration logic
-hidden inside API or worker startup. That keeps the step explicit, auditable,
-and independently retryable.
+one-shot ECS/Fargate task for the migration artifact, with the migration stack
+refreshed first so the task definition is current. Do not hide migrations
+inside API or worker startup. That keeps the step explicit, auditable, and
+independently retryable.
 
 When schema changes are involved, the deploy order should normally be:
 
 - additive migration first
 - worker or async runtime rollout next where relevant
 - API rollout after that
+
+Keep those as separate deployable units. One stack refresh per step is easier
+to observe, easier to stop, and easier to roll back than one big refresh that
+hides which part actually failed.
 
 If the migration is not backward-compatible across a mixed-version window, the
 design is not ready for a normal deploy path yet.

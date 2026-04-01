@@ -169,6 +169,9 @@ Every production service should have:
 - a deployment runbook
 - a rollback plan
 - smoke tests for staging and production
+- a clear environment contract: integration may be used to prepare release
+  steps or dependency changes outside normal release automation, while staging
+  stays close enough to production to be a real rehearsal
 - environment parity high enough that staging failures are meaningful
 
 Incident-management baseline:
