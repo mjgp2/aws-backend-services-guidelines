@@ -65,6 +65,9 @@ The default platform model is boring on purpose:
   need edge controls in front of S3
 - infrastructure provisioned through shared TypeScript CDK AWS modules,
   templates, or platform stacks
+- starting a new service should be cheap: use templates for repo and CI setup,
+  shared IaC building blocks for infrastructure shape, and narrow shared
+  libraries for cross-cutting runtime concerns
 - everything observable, everything restartable, and all background work safe
   under retries
 - no long-lived application credentials by default; prefer IAM roles, IAM DB
