@@ -16,12 +16,13 @@ high-level architecture. Application code is comparatively easier to fix.
 
 ## How To Read These Docs
 
-- `must`, `required`, and explicit launch-readiness lists are the minimum bar
-  before production.
-- `good default`, `recommended`, and similar wording means the baseline I would
-  start with unless the service has a concrete reason to differ.
-- [Checklist](./new-service-checklist/) is the launch-readiness bar. The
-  section docs explain the defaults and the reasons behind them.
+- [Checklist](./new-service-checklist/) is the minimum bar before production.
+- The section docs mix hard rules and defaults. Read them literally: `must`
+  and `required` mean exactly that; `good default`, `recommended`, and
+  `prefer` mean where I would start unless the service has a concrete reason
+  to differ.
+- Record deviations from defaults in the service tech design instead of letting
+  them drift into folklore.
 - Infrastructure, networking, IAM, alarms, and other operationally important
   AWS configuration should live in IaC, not in remembered console state.
 
