@@ -13,7 +13,7 @@ practical operating baseline that a small or medium engineering team can
 actually maintain.
 
 Delivery and release mechanics live in
-[Infra](./infra/). This document focuses on
+[Infra]({{ '/infra/' | relative_url }}). This document focuses on
 observability, self-healing, lifecycle, recovery, and operational standards.
 
 ## 2. Operational Defaults

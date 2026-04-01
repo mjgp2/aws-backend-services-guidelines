@@ -330,7 +330,7 @@ Do not accept silent fallback behavior for production-critical settings.
 
 ## 5. API Guidelines
 
-- The concrete JWT and JWKS operational default lives in [Auth](./auth/).
+- The concrete JWT and JWKS operational default lives in [Auth]({{ '/auth/' | relative_url }}).
 - Use authenticated APIs by default.
 - Separate authentication from authorization.
 - Authenticate at the boundary, then authorize in application or domain logic

@@ -16,7 +16,7 @@ high-level architecture. Application code is comparatively easier to fix.
 
 ## How To Read These Docs
 
-- [Checklist](./new-service-checklist/) is the minimum bar before production.
+- [Checklist]({{ '/new-service-checklist/' | relative_url }}) is the minimum bar before production.
 - The section docs mix hard rules and defaults. Read them literally: `must`
   and `required` mean exactly that; `good default`, `recommended`, and
   `prefer` mean where I would start unless the service has a concrete reason
@@ -28,16 +28,16 @@ high-level architecture. Application code is comparatively easier to fix.
 
 ## Documents
 
-- [Architecture](./architecture/)
-- [Networking](./networking/)
-- [Delivery](./delivery/)
-- [Auth](./auth/)
-- [Software](./software/)
-- [Infra](./infra/)
-- [Ops](./ops/)
-- [Database](./database/)
-- [S3](./s3/)
-- [Checklist](./new-service-checklist/)
+- [Architecture]({{ '/architecture/' | relative_url }})
+- [Networking]({{ '/networking/' | relative_url }})
+- [Delivery]({{ '/delivery/' | relative_url }})
+- [Auth]({{ '/auth/' | relative_url }})
+- [Software]({{ '/software/' | relative_url }})
+- [Infra]({{ '/infra/' | relative_url }})
+- [Ops]({{ '/ops/' | relative_url }})
+- [Database]({{ '/database/' | relative_url }})
+- [S3]({{ '/s3/' | relative_url }})
+- [Checklist]({{ '/new-service-checklist/' | relative_url }})
 
 ## Scope
 

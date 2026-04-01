@@ -143,9 +143,9 @@ service-specific runbook and operator ownership.
 
 ## Related Guidance
 
-- [Infra](./infra/): deployment mechanics, OIDC,
+- [Infra]({{ '/infra/' | relative_url }}): deployment mechanics, OIDC,
 migration task defaults, and rollout sequencing
-- [Database](./database/): schema rollout, migration posture,
+- [Database]({{ '/database/' | relative_url }}): schema rollout, migration posture,
 and restore expectations
-- [Ops](./ops/): smoke tests, alarms, and incident
+- [Ops]({{ '/ops/' | relative_url }}): smoke tests, alarms, and incident
 ownership

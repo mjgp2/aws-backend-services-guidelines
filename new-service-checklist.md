@@ -86,11 +86,11 @@ is ready for first production launch.
 
 ## Related Guidance
 
-- [Software](./software/)
-- [Infra](./infra/)
-- [Networking](./networking/)
-- [Ops](./ops/)
-- [Database](./database/)
-- [S3](./s3/)
-- [Auth](./auth/)
-- [Delivery](./delivery/)
+- [Software]({{ '/software/' | relative_url }})
+- [Infra]({{ '/infra/' | relative_url }})
+- [Networking]({{ '/networking/' | relative_url }})
+- [Ops]({{ '/ops/' | relative_url }})
+- [Database]({{ '/database/' | relative_url }})
+- [S3]({{ '/s3/' | relative_url }})
+- [Auth]({{ '/auth/' | relative_url }})
+- [Delivery]({{ '/delivery/' | relative_url }})

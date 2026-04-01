@@ -104,7 +104,7 @@ flowchart TD
 
 ## Related Guidance
 
-- [Software](./software/): application authz, contracts, and
+- [Software]({{ '/software/' | relative_url }}): application authz, contracts, and
   API design defaults
-- [Infra](./infra/): service-to-service identity,
+- [Infra]({{ '/infra/' | relative_url }}): service-to-service identity,
   secrets posture, and security defaults

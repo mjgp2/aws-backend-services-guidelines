@@ -93,11 +93,11 @@ flowchart TD
 
 ## Related Guidance
 
-- [Software](./software/): service boundaries, contracts, and
+- [Software]({{ '/software/' | relative_url }}): service boundaries, contracts, and
   background workflow design
-- [Infra](./infra/): compute, queues, security, and
+- [Infra]({{ '/infra/' | relative_url }}): compute, queues, security, and
   delivery mechanics
-- [Database](./database/): relational state, outbox posture,
+- [Database]({{ '/database/' | relative_url }}): relational state, outbox posture,
   and migration rules
-- [S3](./s3/): object lifecycle, access, and
+- [S3]({{ '/s3/' | relative_url }}): object lifecycle, access, and
   cost controls

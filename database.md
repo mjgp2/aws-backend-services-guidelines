@@ -237,7 +237,7 @@ shared Aurora cluster rather than defaulting to one cluster per service.
 - prefer additive changes before destructive ones
 - assume mixed-version deploy windows during rollout
 - apply the same mixed-version compatibility rule described in
-  [Delivery](./delivery/): if older runtimes may still be handling traffic,
+  [Delivery]({{ '/delivery/' | relative_url }}): if older runtimes may still be handling traffic,
   jobs, or rollbacks, the migrated schema must remain backward-compatible
   enough for them to keep operating
 - backfills need explicit throttling and observability
@@ -327,7 +327,7 @@ Recommended defaults:
 - object bytes in S3 and metadata in PostgreSQL
 - lifecycle jobs or partition policies for deleting expired data
 
-Detailed S3 policy lives in [S3](./s3/).
+Detailed S3 policy lives in [S3]({{ '/s3/' | relative_url }}).
 
 ## 6. When Aurora PostgreSQL Is Not The Right Default
 

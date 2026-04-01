@@ -143,7 +143,7 @@ finished yet.
 
 ## Related Guidance
 
-- [Infra](./infra/): VPC, security, delivery, and
+- [Infra]({{ '/infra/' | relative_url }}): VPC, security, delivery, and
   service runtime defaults
-- [Architecture](./architecture/): runtime and dataflow pattern
-- [S3](./s3/): object access and signed delivery
+- [Architecture]({{ '/architecture/' | relative_url }}): runtime and dataflow pattern
+- [S3]({{ '/s3/' | relative_url }}): object access and signed delivery

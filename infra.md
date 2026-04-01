@@ -12,11 +12,11 @@ platform that a startup team can run safely at scale with a small number of
 engineers.
 
 Observability, lifecycle, recovery, and incident posture live in
-[Ops](./ops/). This document focuses on platform
+[Ops]({{ '/ops/' | relative_url }}). This document focuses on platform
 shape, AWS primitives, security, delivery, cost, and tagging.
 
 The diagram view of the VPC, subnet, NAT, endpoint, and bastion model lives in
-[Networking](./networking/).
+[Networking]({{ '/networking/' | relative_url }}).
 
 ## 2. Default Production Shape
 
@@ -63,7 +63,7 @@ understand.
 - keep peerings, routes, and cross-network reachability explicit and narrow
 
 Detailed CIDR planning, NAT posture, interface-endpoint decisions, flow-log
-tradeoffs, and bastion posture live in [Networking](./networking/).
+tradeoffs, and bastion posture live in [Networking]({{ '/networking/' | relative_url }}).
 
 ## 3. Infrastructure Rules
 
@@ -115,7 +115,7 @@ event.
   entrypoint.
 
 Detailed S3 policy, including bucket layout, storage classes, lifecycle rules,
-and signed-access posture, lives in [S3](./s3/).
+and signed-access posture, lives in [S3]({{ '/s3/' | relative_url }}).
 
 Teams should only self-host infrastructure when a managed alternative creates a
 clear product or cost problem.
@@ -161,12 +161,12 @@ Use SNS when the producer is announcing that something happened. Use SQS when
 the producer needs work to be performed.
 
 Detailed contract, compatibility, outbox, and mixed-version messaging rules
-live in [Software](./software/) and the runtime flow is illustrated in
-[Architecture](./architecture/).
+live in [Software]({{ '/software/' | relative_url }}) and the runtime flow is illustrated in
+[Architecture]({{ '/architecture/' | relative_url }}).
 
 ### 3.4 Standardize deployment and provisioning
 
-The diagram view of this release flow lives in [Delivery](./delivery/).
+The diagram view of this release flow lives in [Delivery]({{ '/delivery/' | relative_url }}).
 
 - Everything important should live in infrastructure-as-code. Do not accept
   console-built snowflakes for service infrastructure, IAM, networking, alarms,
