@@ -213,6 +213,9 @@ Default CI/CD posture:
 - do not give deployment automation long-lived static AWS credentials
 - publish runtime artifact locations and deployment metadata through a shared
   metadata system such as SSM Parameter Store
+- keep an emergency operator-run path from a local machine using the same
+  short-lived auth model; do not make production release depend entirely on
+  GitHub Actions or another hosted CI provider being up
 
 For a shared TypeScript CDK AWS infrastructure layer, a good default deploy
 shape is:

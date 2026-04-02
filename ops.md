@@ -168,6 +168,8 @@ Every production service should have:
   owner
 - a deployment runbook
 - a rollback plan
+- an emergency release path that can be run from a local machine with audited,
+  short-lived access if the normal CI system is down
 - smoke tests for staging and production
 - a clear environment contract: integration may be used to prepare release
   steps or dependency changes outside normal release automation, while staging

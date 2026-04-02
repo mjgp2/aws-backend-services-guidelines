@@ -55,6 +55,9 @@ is ready for first production launch.
 - [ ] One immutable artifact set is built and promoted through environments.
 - [ ] Database migrations are part of that artifact set and have a defined
       execution path.
+- [ ] An emergency release path exists from a local machine with short-lived,
+      audited access; production release does not depend entirely on GitHub
+      Actions or another hosted CI system being up.
 - [ ] Normal rollout is safe across mixed-version API, worker, and consumer
       windows.
 - [ ] Runtime rollback is compatible with the newest deployed schema and queued

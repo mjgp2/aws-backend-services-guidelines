@@ -57,6 +57,9 @@ CloudFormation rollout should collapse to a no-op.
 ad hoc operator step outside the delivery pipeline.
 - Use OIDC or another short-lived federated mechanism for deploy access.
 - Deploy by updating each stack's artifact parameter and refreshing that stack.
+- Emergency release must still be possible from a suitably privileged local
+machine. Do not make outage response depend entirely on GitHub Actions or any
+other hosted CI system being healthy.
 - Production should receive the same artifact set that already qualified in
 staging.
 
@@ -130,6 +133,8 @@ ad hoc schema rollback.
 incident response plan.
 - Hotfixes should still produce an immutable artifact, run the critical
 verification needed for the incident, and record the promoted artifact set.
+- Keep an operator-run local release path documented and tested enough that a
+  CI outage does not block incident response.
 - If an incident forces a production-first hotfix, back-promote or re-qualify
 that same artifact in staging afterward so the next regular release starts
 from known-good state.
