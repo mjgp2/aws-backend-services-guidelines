@@ -54,6 +54,10 @@ Sensitive-data default:
 Observability is not complete unless dashboards and alarms exist. Emitting data
 without alerting on it is only partial instrumentation.
 
+Alarming should not be metrics-only. If important failures first appear as
+structured error logs, add log-based alarms for them rather than hoping someone
+spots the pattern in a dashboard later.
+
 ### 2.2 Self-healing first
 
 Infrastructure and runtimes should assume processes will die, tasks will be
@@ -161,6 +165,8 @@ Every production service should have:
 - an explicit support model for production alarms, for example business-hours
   support or 24x7 on-call, so paging expectations are not implicit
 - dashboards for API health, worker health, queue health, and database health
+- log-based alarms for important structured error patterns that are not covered
+  well enough by metrics alone
 - centrally recorded service ownership metadata for alerting, inventory, and
   incident response
 - a documented retention and deletion policy for major data classes

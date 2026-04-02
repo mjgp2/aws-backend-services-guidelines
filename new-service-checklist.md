@@ -67,6 +67,8 @@ is ready for first production launch.
       production.
 - [ ] Dashboards and alarms exist for API health, worker health, queue health,
       and database health.
+- [ ] Important structured error patterns have log-based alarms if metrics do
+      not already catch them well enough.
 - [ ] Alert routing separates paging alarms from business-hours alarms, for
       example with two SNS topics or channels: one for wake-people-up alerts
       and one for next-business-day alerts.
