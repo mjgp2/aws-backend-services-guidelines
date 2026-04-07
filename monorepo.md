@@ -115,6 +115,9 @@ probably not solved the underlying release and ownership problem yet.
 
 - every service must produce its own immutable artifact set
 - every service must have its own promotion history across environments
+- every service must have its own release identity, for example service-scoped
+  artifact naming, tags, or metadata, so one repository commit does not become
+  the only release coordinate
 - every service must be deployable without rebuilding or redeploying unrelated
   services
 - every service must have a documented rollback path to a known-good artifact
@@ -214,6 +217,8 @@ A strong proposal should be able to show:
 - the service directory or package model and the ownership map
 - the dependency graph rules, including how shared libraries are tracked
 - the exact impact-analysis logic for deciding which services need CI
+- the release identity scheme for each service, including how artifacts are
+  named, tagged, or otherwise identified independently of the repo head
 - one example change that affects only one service and the resulting CI and
   deploy path
 - one example shared-package change and the resulting impact analysis
