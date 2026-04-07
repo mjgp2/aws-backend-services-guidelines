@@ -66,6 +66,10 @@ is ready for first production launch.
       Actions or another hosted CI system being up.
 - [ ] Normal rollout is safe across mixed-version API, worker, and consumer
       windows.
+- [ ] If the service interacts with independently deployed peers, qualification
+      includes explicit compatibility evidence against relevant prior or
+      adjacent versions; "everything from the same commit worked together" is
+      not the only gate.
 - [ ] Runtime rollback is compatible with the newest deployed schema and queued
       messages.
 - [ ] Staging qualification, smoke checks, and rollback steps are written down.

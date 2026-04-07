@@ -160,6 +160,9 @@ latency threshold at which service-scoped validation becomes mandatory.
   or contract, not to an undifferentiated repo-wide test blob
 - contract compatibility across services must be explicit for APIs, events, and
   queue payloads
+- testing only "all affected services from the current HEAD commit" is not
+  sufficient evidence when services deploy independently; the monorepo must
+  prove the relevant mixed-version and rollback combinations as well
 - mixed-version rollout and rollback rules still apply; the repo shape does not
   remove compatibility requirements
 
@@ -216,6 +219,9 @@ Advocates should be able to show:
 - one example shared-package change and the resulting impact analysis
 - one example intentional multi-service contract change and the resulting
   validation path
+- one example compatibility gate that tests a new service artifact or contract
+  against a previously qualified peer version, rather than only against peers
+  built from the same commit
 - one example service rollback that repoints to an older service artifact
   without reverting unrelated repo changes
 - one example emergency hotfix for a single service during unrelated ongoing

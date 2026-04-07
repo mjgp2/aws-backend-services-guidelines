@@ -95,6 +95,11 @@ Do not blur them.
 
 - Normal deploys must tolerate a mixed-version window across API tasks, worker
 tasks, queue consumers, and producers.
+- For independently deployed services, testing only the latest code from one
+  repository state or one commit is not enough. Same-commit qualification can
+  hide the real compatibility failures that appear when a new producer meets an
+  older consumer, an older producer meets a new consumer, or a rolled-back
+  runtime meets newer schema or queued payloads.
 - Treat database evolution like API evolution: if older runtimes may still be
 live during rollout or rollback, the schema has to stay backward-compatible
 enough for those older runtimes to keep working.
@@ -103,6 +108,9 @@ first, rollout next, backfill after that, destructive cleanup only after the
 old runtime and old payload shape are gone.
 - Runtime rollback should remain safe against the currently deployed schema and
 the messages still sitting in queues.
+- Qualification for independently deployed peers should include explicit
+  compatibility evidence for the relevant adjacent versions or previously
+  qualified artifacts, not only "everything built from HEAD works together."
 - If a release needs a schema or message-format break that makes normal rolling
 deploy or rollback unsafe, it needs an explicit phased runbook. It is not a
 standard deploy anymore.

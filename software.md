@@ -161,6 +161,9 @@ Compatibility defaults:
 - additive, backward-compatible changes should be the normal contract evolution
   path
 - producers should support mixed-version consumers during rollout windows
+- same-commit integration tests are not sufficient proof of compatibility when
+  independently deployed services or consumers can run different versions of
+  the contract at the same time
 - consumers should fail deterministically and preserve the message for retry or
   DLQ handling if they receive a version they cannot safely process; do not
   partially apply side effects or silently drop incompatible messages
