@@ -15,9 +15,9 @@ Those benefits are real. They are also not free. A monorepo is only a good fit
 when the platform can preserve service-level ownership, CI, release, rollback,
 and incident isolation even though the code shares one version-control root.
 
-If advocates for a monorepo cannot satisfy the requirements below, then the
-repository is still acting as one coupled release unit and should be treated
-that way.
+The requirements below are meant to help teams evaluate that honestly. If the
+model cannot meet them yet, the repository is probably still behaving like one
+coupled release unit and should be planned that way.
 
 ## 1. What This Guidance Is And Is Not Saying
 
@@ -29,7 +29,7 @@ This page is not saying:
 - shared libraries, shared tooling, or platform packages are bad
 - cross-service changes should never be atomic
 
-This page is saying:
+This page is trying to help teams ensure that:
 
 - once services need independent ownership and release lifecycles, the repo
   structure must not destroy that independence
@@ -40,7 +40,7 @@ This page is saying:
 
 ## 2. When A Multi-Service Monorepo Is A Reasonable Fit
 
-A monorepo is easier to justify when most of these are true:
+A monorepo is usually easier to justify when most of these are true:
 
 - services share one primary language or toolchain family
 - teams expect regular atomic changes across service contracts, shared runtime
@@ -83,9 +83,9 @@ If you know of a published, field-proven pattern that materially satisfies
 those requirements end to end, please contact me with the reference:
 [Matthew Painter on LinkedIn](https://www.linkedin.com/in/matthewjgpainter/).
 
-## 4. Non-Negotiable Outcomes
+## 4. Required Outcomes
 
-The monorepo must preserve these outcomes:
+A workable monorepo should preserve these outcomes:
 
 - each service can build, test, deploy, and roll back independently
 - unrelated services do not get retested, reapproved, or redeployed on the
@@ -97,8 +97,8 @@ The monorepo must preserve these outcomes:
 - every service still has explicit ownership, contracts, alarms, runbooks, and
   operational accountability
 
-If the proposed monorepo cannot make those outcomes routine, not exceptional,
-it has not solved the real problem.
+If the model cannot make those outcomes routine rather than exceptional, it has
+probably not solved the underlying release and ownership problem yet.
 
 ## 5. Required Capabilities
 
@@ -144,7 +144,7 @@ to work per service afterward.
   should be clearly separated from service-scoped validation
 
 Repo-wide validation is still useful as a safety net, periodic confidence
-check, or higher-friction gate. It just cannot be the only serious way to know
+check, or higher-friction gate. It should not be the only serious way to know
 whether one service change is safe.
 
 A small monorepo may start with conservative repo-wide validation for a while.
@@ -202,14 +202,14 @@ The monorepo should distinguish at least these change types:
   services or contracts together
 
 These are different risk profiles. If the repository treats them all the same,
-it will either under-test shared changes or over-tax isolated ones.
+it will usually either under-test shared changes or over-tax isolated ones.
 
-## 6. Evidence Advocates Must Provide
+## 6. Evidence For A Strong Proposal
 
-Do not accept "the tooling can do it" as the argument. Ask for a concrete
-design and examples.
+It is worth moving beyond "the tooling can do it" and working through a
+concrete design together.
 
-Advocates should be able to show:
+A strong proposal should be able to show:
 
 - the service directory or package model and the ownership map
 - the dependency graph rules, including how shared libraries are tracked
@@ -229,20 +229,20 @@ Advocates should be able to show:
 - the fallback behavior when impact analysis is ambiguous or tooling is wrong
 - the policy for contract compatibility and internal-package change management
 
-Prefer a real rehearsal over a slide deck:
+When possible, prefer a real rehearsal over a slide deck:
 
 - run or simulate a service-only change through CI, deploy, and rollback
 - run or simulate a shared-package change and show the impacted-service fan-out
 - show what operators would do when one service must hotfix while another
   service has newer unrelated commits on the branch
 
-If they cannot demonstrate those workflows concretely, the proposal is still a
-theory.
+If those workflows remain abstract, the proposal is still theoretical and will
+benefit from more design work before teams rely on it operationally.
 
-## 7. Red Flags
+## 7. Common Failure Signals
 
-These are signs that the monorepo is recreating coupling instead of removing
-it:
+These are usually signs that the monorepo is recreating coupling instead of
+removing it:
 
 - the main branch or repo state is still treated as the release artifact
 - rollback requires reverting unrelated changes that happened later in the same
@@ -259,15 +259,15 @@ it:
 
 ## 8. Decision Rule
 
-Use a multi-service monorepo only if the platform can make it behave like many
-independent services that happen to share one version-control root.
+A multi-service monorepo is a good fit only if the platform can make it behave
+like many independent services that happen to share one version-control root.
 
 The monorepo earns its keep when it gives you shared visibility and atomic
 change without collapsing service autonomy.
 
 If the repo still behaves like one shared release boundary, the organization is
-not getting monorepo convenience for free. It is paying for coupling while
-pretending it has isolation.
+not really getting the full monorepo upside. It is still carrying much of the
+coupling cost without the intended service isolation.
 
 ## Related Guidance
 
