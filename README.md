@@ -20,6 +20,8 @@ org.
   at a glance
 - [Delivery](./delivery.md): build, qualification, rollout, rollback, and
   hotfix defaults
+- [Monorepo](./monorepo.md): requirements for putting multiple independently
+  deployable backend services in one repository
 - [Auth](./auth.md): JWT, JWKS, gateway, and service-to-service auth defaults
 - [Infra](./infra.md): platform shape, messaging, security, CI/CD posture, cost, and AWS defaults
 - [Ops](./ops.md): observability, self-healing, lifecycle, recovery, and operational standards

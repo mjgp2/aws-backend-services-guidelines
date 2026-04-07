@@ -99,6 +99,16 @@ then try to recreate isolation later in CI, release orchestration, or approval
 flows. If services need independent ownership, testing, release cadence, and
 rollback, the repo boundary should normally reflect that.
 
+A multi-service monorepo can still work, but only if the repository stops
+acting like the release boundary. If you want that model, treat
+[Monorepo]({{ '/monorepo/' | relative_url }}) as the entry criteria: advocates
+need to prove per-service build, test, deploy, rollback, and ownership
+isolation, not just assert that the tooling is flexible enough.
+
+The strongest case for a monorepo is usually atomic cross-service changes,
+shared tooling, and one place to search code and contracts. Those are real
+benefits. They only justify the model when service autonomy survives them.
+
 Shared code is not a reason to collapse unrelated services into one repo. If a
 library is genuinely shared and has its own lifecycle, publish it as a shared
 package or keep it in a separately owned shared-code repo.
@@ -484,6 +494,8 @@ CI expectations:
   many places
 - local hooks such as pre-commit or pre-push should reuse the same named
   verification commands that CI uses where practical
+- pre-commit filters should include secret scanning so obvious credential leaks
+  are caught before they ever leave a developer machine
 - separate fast quality checks from slower integration and functional tiers so
   failures are easier to interpret and rerun
 - every pull request should run the fast test layers needed to protect the
@@ -493,6 +505,11 @@ CI expectations:
 - functional tests should exist for the highest-value workflows and should run
   in CI or in a gated pre-release path
 - smoke tests should validate the deployed artifact in staging and production
+- in a multi-service monorepo, each service should expose its own named build,
+  unit-test, integration-test, and package commands
+- in a multi-service monorepo, CI should support service-scoped validation for
+  isolated changes and broader fan-out for shared-package or multi-service
+  changes
 
 Recommended CI layers:
 

@@ -45,10 +45,16 @@ is ready for first production launch.
 - [ ] IaC changes are reviewed with the same discipline as application code,
       with extra care because they can change security boundaries, runtime
       behavior, and cost posture immediately.
+- [ ] Pre-commit filters include secret scanning so obvious credential leaks are
+      blocked before commit.
 - [ ] Storage lifecycle is designed before launch: each object family has an
       owner, retention rule, and cleanup path.
 - [ ] The service explicitly chooses direct S3 versus CloudFront for any
       client-facing object path.
+- [ ] If the service lives in a multi-service monorepo, its service-scoped
+      build, test, package, deploy, and rollback path is documented.
+- [ ] If the service lives in a multi-service monorepo, the impact-analysis
+      rules for shared-package changes are documented.
 
 ## 2. Before First Production Launch
 
@@ -65,6 +71,8 @@ is ready for first production launch.
 - [ ] Staging qualification, smoke checks, and rollback steps are written down.
 - [ ] Hotfix flow still uses immutable artifacts and records what reached
       production.
+- [ ] If the service lives in a multi-service monorepo, its isolated deploy and
+      rollback path has been rehearsed, not just described.
 - [ ] Dashboards and alarms exist for API health, worker health, queue health,
       and database health.
 - [ ] Important structured error patterns have log-based alarms if metrics do

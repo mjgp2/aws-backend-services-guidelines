@@ -31,6 +31,7 @@ high-level architecture. Application code is comparatively easier to fix.
 - [Architecture]({{ '/architecture/' | relative_url }})
 - [Networking]({{ '/networking/' | relative_url }})
 - [Delivery]({{ '/delivery/' | relative_url }})
+- [Monorepo]({{ '/monorepo/' | relative_url }})
 - [Auth]({{ '/auth/' | relative_url }})
 - [Software]({{ '/software/' | relative_url }})
 - [Infra]({{ '/infra/' | relative_url }})
@@ -78,6 +79,8 @@ The default platform model is boring on purpose:
 
 - Start with Checklist when creating a service or reviewing launch readiness.
 - Start with Software for service boundaries, design method, and testing.
+- Use Monorepo when people want multiple independently deployable services in
+  one repository and you need explicit acceptance criteria instead of slogans.
 - Use Infra for deployment shape, security defaults, CI/CD, and platform
   choices.
 - Use Networking for the VPC, subnet, NAT, endpoint, and bastion model.
