@@ -1,27 +1,85 @@
 ---
-title: Monorepo
-permalink: /monorepo/
+title: Repos
+permalink: /repos/
 ---
 
-This guidance applies only when you want multiple independently deployable
-backend services in one repository.
+Use this guidance for repository-boundary choices in backend services.
 
-The default recommendation in these docs is still one repository per
-deployable domain service. A multi-service monorepo is a valid exception model
-when teams want atomic cross-service changes, shared tooling, and one place to
-discover code, contracts, and infrastructure.
+The default recommendation in these docs is one repository per deployable
+domain service.
+
+Shared libraries, templates, and platform packages can live together in a
+separately owned shared-code repository or shared-code monorepo when that
+improves ownership and reuse without collapsing service release boundaries.
+
+A multi-service monorepo is a valid exception model when teams want
+atomic cross-service changes, shared tooling, and one place to discover code,
+contracts, and infrastructure.
 
 Those benefits are real. They are also not free. A monorepo is only a good fit
 when the platform can preserve service-level ownership, CI, release, rollback,
 and incident isolation even though the code shares one version-control root.
 
-The requirements below are meant to help teams evaluate that honestly. If the
-model cannot meet them yet, the repository is probably still behaving like one
-coupled release unit and should be planned that way.
+The guidance below is meant to help teams evaluate that choice honestly. If a
+multi-service repository cannot meet the required bar, it is still behaving
+like one coupled release unit and should be planned that way.
 
-## 1. What This Guidance Is And Is Not Saying
+## 1. Default Recommendation
 
-This page is not saying:
+Default to one repository per deployable domain service.
+
+That is the cleanest fit when services need:
+
+- independent ownership
+- isolated CI and test execution
+- isolated rollout and rollback
+- isolated hotfix paths
+- clear operational accountability under incident pressure
+
+Do not split one service into multiple repos per runtime by default if those
+parts are developed, tested, released, and rolled back together.
+
+That does not mean one service has to be one package. One deployable service
+can still be internally split into multiple packages, modules, or workspaces
+inside its own repo when that improves structure without creating a second
+release boundary.
+
+## 2. Baseline Requirements For Any Service Repo
+
+Whatever repository model you choose, the repo should preserve these outcomes:
+
+- a deployable service has a clear ownership boundary
+- the repository is not vague about what release unit it contains
+- build, test, deploy, and rollback paths are explicit
+- service contracts, tests, docs, and service-local infrastructure stay close
+  to the code they govern
+- operational ownership stays aligned to the service boundary
+
+For a normal service repo, that usually means keeping together:
+
+- API runtimes
+- worker runtimes
+- queue consumers
+- service contracts and schemas
+- service tests
+- service-local infrastructure definitions
+- service tech design and runbook docs
+
+Default rules:
+
+- do not split one service into multiple repos per runtime if those parts are
+  developed, tested, released, and rolled back together
+- allow internal packages inside one service repo when they still roll up to
+  one deployable service boundary
+- keep named owners and review routing explicit
+- keep the release artifact aligned to the service boundary, not to an
+  arbitrary branch or repository-wide bundle
+- keep service-local docs and operational materials in the repo rather than in
+  a separate drifting wiki
+- if the system is still a modular monolith, one repo is normal until a real
+  deploy boundary needs to move independently
+
+This guidance is not saying:
 
 - a modular monolith needs to be split across many repos before the deploy
   boundary is real
@@ -29,16 +87,42 @@ This page is not saying:
 - shared libraries, shared tooling, or platform packages are bad
 - cross-service changes should never be atomic
 
-This page is trying to help teams ensure that:
+## 3. Shared Libraries And Shared Code
 
-- once services need independent ownership and release lifecycles, the repo
-  structure must not destroy that independence
-- the repository root is not the release artifact; each service still needs its
-  own artifact set and rollback path
-- a monorepo must make isolated change, isolated testing, and isolated release
-  routine enough that engineers trust the model under pressure
+Shared code should not be used as the reason to collapse unrelated services
+into one repository.
 
-## 2. When A Multi-Service Monorepo Is A Reasonable Fit
+Recommended default:
+
+- keep each deployable service in its own repo
+- keep shared libraries, templates, and platform packages together in a
+  separately owned shared-code repo or shared-code monorepo when they share
+  ownership, tooling, and change-management needs
+- publish or version those shared packages intentionally
+
+This is usually a better fit than putting many independently deployable
+services into one repo just because they depend on the same foundations.
+
+Use a shared-code monorepo when:
+
+- several shared libraries or templates have the same owners
+- coordinated changes across those packages are common enough that one place
+  for testing, compatibility checks, and review improves engineering quality
+- one place to run library tests, compatibility checks, and release workflows
+  improves engineering quality
+- the repo is clearly about shared code, not many product services pretending
+  to be one platform
+
+Avoid:
+
+- treating shared code as an excuse to centralize unrelated services
+- letting one vague `shared` repo fill up with code that has no clear owner
+- forcing product service release cadence to follow the lifecycle of internal
+  libraries
+
+## 4. Multi-Service Monorepo Guidance
+
+### 4.1 When A Multi-Service Monorepo Is A Reasonable Fit
 
 A monorepo is usually easier to justify when most of these are true:
 
@@ -54,7 +138,7 @@ If the main argument is only "we have shared code," that is usually too weak.
 Shared libraries and templates are often cheaper than shared release
 complexity.
 
-## 3. Published Playbook Status
+### 4.2 Published Playbook Status
 
 As of April 7, 2026, I have not found a published, end-to-end playbook that I
 would treat as sufficient on its own for running multiple independently
@@ -83,7 +167,7 @@ If you know of a published, field-proven pattern that materially satisfies
 those requirements end to end, please contact me with the reference:
 [Matthew Painter on LinkedIn](https://www.linkedin.com/in/matthewjgpainter/).
 
-## 4. Required Outcomes
+### 4.3 Outcomes The Repository Model Must Preserve
 
 A workable monorepo should preserve these outcomes:
 
@@ -100,18 +184,13 @@ A workable monorepo should preserve these outcomes:
 If the model cannot make those outcomes routine rather than exceptional, it has
 probably not solved the underlying release and ownership problem yet.
 
-## 5. Required Capabilities
+These are the same baseline repo outcomes, but they are harder to preserve in a
+multi-service monorepo because the repository shape creates more opportunities
+for accidental coupling.
 
-### 5.1 Service identity and ownership are required
+### 4.4 Capabilities Needed To Preserve Those Outcomes In A Monorepo
 
-- each service must have a clear directory, package, or module boundary
-- each service must have named owners
-- review routing, CODEOWNERS, or equivalent controls must reflect service and
-  shared-package boundaries
-- decision authority must stay aligned to service boundaries even when one pull
-  request touches many areas
-
-### 5.2 Release isolation is required
+#### 4.4.1 Independent release isolation inside one repo
 
 - every service must produce its own immutable artifact set
 - every service must have its own promotion history across environments
@@ -132,7 +211,7 @@ Atomic multi-service changes are fine when they are intentional. The point is
 that one commit may touch several services, but release and rollback still have
 to work per service afterward.
 
-### 5.3 CI isolation is required
+#### 4.4.2 Impact-aware CI and validation are required
 
 - the repository must support service-scoped build and test commands
 - CI must know which services and shared packages are affected by a change,
@@ -154,47 +233,7 @@ A small monorepo may start with conservative repo-wide validation for a while.
 If that is the current posture, record it honestly and define the scale or
 latency threshold at which service-scoped validation becomes mandatory.
 
-### 5.4 Testing must follow service boundaries
-
-- each service must own a runnable test suite that proves its behavior without
-  depending on unrelated services being built first
-- shared libraries must have their own tests and compatibility expectations
-- integration and functional tests must be attributable to a specific service
-  or contract, not to an undifferentiated repo-wide test blob
-- contract compatibility across services must be explicit for APIs, events, and
-  queue payloads
-- testing only "all affected services from the current HEAD commit" is not
-  sufficient evidence when services deploy independently; the monorepo must
-  prove the relevant mixed-version and rollback combinations as well
-- mixed-version rollout and rollback rules still apply; the repo shape does not
-  remove compatibility requirements
-
-### 5.5 Dependency hygiene is required
-
-- service directories, packages, or modules must have explicit ownership and
-  allowed dependency rules
-- cross-service imports must be narrow, intentional, and reviewable
-- shared libraries must stay small, boring, and compatible with independent
-  service release
-- internal shared packages do not need public-package semantics, but they do
-  need an explicit compatibility and change-management policy
-- if a shared package change can affect many services, the monorepo must know
-  which ones and prove them before release
-
-### 5.6 Infra and operational isolation are required
-
-- each service must have its own infrastructure definitions or clearly isolated
-  stack inputs
-- deploy permissions, runtime metadata, and rollout controls must stay scoped
-  per service
-- dashboards, alarms, SLOs, DLQs, runbooks, and on-call expectations must stay
-  owned per service
-- incident response must allow rolling back, pausing, or scaling one service
-  without creating collateral release risk for others
-- service-local docs must remain close to the code and release artifacts for
-  that service
-
-### 5.7 Change classes must be explicit
+#### 4.4.3 Change classes must be explicit
 
 The monorepo should distinguish at least these change types:
 
@@ -207,7 +246,7 @@ The monorepo should distinguish at least these change types:
 These are different risk profiles. If the repository treats them all the same,
 it will usually either under-test shared changes or over-tax isolated ones.
 
-## 6. Evidence For A Strong Proposal
+### 4.5 Evidence For A Strong Proposal
 
 It is worth moving beyond "the tooling can do it" and working through a
 concrete design together.
@@ -244,7 +283,7 @@ When possible, prefer a real rehearsal over a slide deck:
 If those workflows remain abstract, the proposal is still theoretical and will
 benefit from more design work before teams rely on it operationally.
 
-## 7. Common Failure Signals
+### 4.6 Common Failure Signals
 
 These are usually signs that the monorepo is recreating coupling instead of
 removing it:
@@ -262,7 +301,7 @@ removing it:
   than service level
 - incident response becomes slower because release state is harder to isolate
 
-## 8. Decision Rule
+### 4.7 Decision Rule
 
 A multi-service monorepo is a good fit only if the platform can make it behave
 like many independent services that happen to share one version-control root.

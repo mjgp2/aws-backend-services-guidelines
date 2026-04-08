@@ -16,7 +16,10 @@ Observability, lifecycle, recovery, and incident posture live in
 shape, AWS primitives, security, delivery, cost, and tagging.
 
 The product-team versus platform/cloud ownership split lives in
-[Team Topologies]({{ '/team-topologies/' | relative_url }}).
+[Team]({{ '/team-topologies/' | relative_url }}).
+
+AWS CDK TypeScript repo structure and IaC authoring guidance live in
+[IaC]({{ '/iac/' | relative_url }}).
 
 The diagram view of the VPC, subnet, NAT, endpoint, and bastion model lives in
 [Networking]({{ '/networking/' | relative_url }}).

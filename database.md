@@ -188,6 +188,37 @@ Bad JSONB use cases:
 
 ## 4. Aurora PostgreSQL Operational Posture
 
+### 4.0 Ownership boundary
+
+Database ownership needs two levels to stay clear:
+
+- platform/cloud owns the database platform: cluster shape, engine posture,
+  backup and restore standards, auth model, connection-management defaults,
+  shared observability, and the delivery guardrails around migrations
+- product teams own service-local database behavior: schema design, indexes,
+  queries, data lifecycle choices, migration contents, and the correctness and
+  cost of the workload they run on that allocation
+
+The default model in these docs is a shared Aurora cluster per environment or
+domain group, with service-owned allocations inside it. Shared cluster does
+not mean shared schema ownership.
+
+Normal boundary rules:
+
+- each service should have its own database allocation, app user, owner user,
+  and migration artifact
+- a product team should be able to evolve its own schema within the platform
+  guardrails without opening a standing ticket to another team
+- material schema changes should normally receive database peer review from
+  platform/cloud when that team carries the strongest scalability and
+  operational expertise for the shared database estate
+- platform should own the standards and reusable tooling, not the routine
+  content of every product migration
+- cross-service direct table writes are the exception case and should be
+  treated as an explicit architectural decision, not a convenience default
+- if one service's schema or query behavior can materially harm the shared
+  cluster, platform gets to define and enforce the safety bar
+
 ### 4.1 Treat the database as a precious shared dependency
 
 - use connection pooling
@@ -230,6 +261,10 @@ ownership inside that cluster
 A good shared-infrastructure setup follows this model: each service owns its
 own database allocation, app user, owner user, and migration stack inside a
 shared Aurora cluster rather than defaulting to one cluster per service.
+
+That is the key boundary: platform can own the shared cluster and its
+guardrails, but product still owns the service-local schema and the migrations
+that change it.
 
 ### 4.3 Migrations
 
@@ -378,3 +413,24 @@ team is not ready to run a second data platform, or cross-region analytics
 replication is a hard requirement on day one, this is the wrong tool. Keep the
 replicated scope narrow and deliberate; Redshift is not your second
 operational database.
+
+## 6.3 Search pattern: OpenSearch as a derived search system
+
+If the product needs real full-text search, faceting, relevance tuning, or
+search-heavy read patterns that no longer fit PostgreSQL cleanly, OpenSearch is
+a reasonable companion system.
+
+Use OpenSearch as a derived search layer, not as the canonical source of truth.
+
+- keep PostgreSQL as the operational system of record unless the product
+  genuinely centers on search-engine-native behavior
+- feed OpenSearch from explicit indexing pipelines or events rather than
+  treating it as the place where writes originate
+- keep index mappings, reindex strategy, and backfill posture explicit
+- be honest about consistency: most OpenSearch-backed product search is
+  eventually consistent, and the product needs to tolerate that
+- do not move routine product lookups into OpenSearch just because it exists
+
+The mistake to avoid is building a second primary datastore by accident. Use
+OpenSearch when search quality or search scale is the real requirement, not as
+a vague escape hatch from relational design.

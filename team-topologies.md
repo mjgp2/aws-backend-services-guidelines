@@ -1,5 +1,5 @@
 ---
-title: Team Topologies
+title: Team
 permalink: /team-topologies/
 ---
 
@@ -75,16 +75,53 @@ product behavior deployed on top of it.
 
 - An ECS API service, worker service, or Cloudflare Worker that exists to
   implement product or BFF behavior belongs with product engineering.
-- A shared service for upload, canonical storage, deduplication, generic
-  transforms, and stable content-addressed retrieval can sit with platform if
-  it stays generic and reusable.
+- For example, a shared service for upload, canonical storage, deduplication,
+  generic transforms, and stable content-addressed retrieval can sit with
+  platform if it stays generic and reusable.
+- Shared data-platform capabilities such as data lakes, warehouse ingestion
+  paths, search platforms and search indexes such as OpenSearch, and the
+  common architecture around them will often sit with platform, because they
+  are cross-cutting capabilities rather than one product team's feature
+  workload.
 - Database schema scalability, migration posture, and expert guardrails can be
   a platform concern, while product teams still evolve their own data models
   within those supported patterns.
-- Monorepo versus repo-per-service is mainly a software choice, but platform
-  should define the bar it must meet: independently deployable artifacts,
-  promotion by artifact, and safe roll-forward or rollback per service with
-  correct migration ordering.
+- [Repos]({{ '/repos/' | relative_url }}) is
+  mainly a software choice, but platform should define the bar it must meet:
+  independently deployable artifacts, promotion by artifact, and safe
+  roll-forward or rollback per service with correct migration ordering.
+
+### 4.1 Database ownership boundary
+
+- platform/cloud owns the shared database platform: cluster posture, backup and
+  restore standards, engine-version posture, auth and connection-management
+  defaults, shared observability, and migration guardrails
+- product teams own their service-local database behavior: schema design,
+  indexes, queries, migration contents, retention choices, and the runtime
+  behavior that hits that allocation
+- product teams should be able to make routine schema changes inside the
+  supported guardrails without waiting on platform as a standing DBA queue
+- material schema changes should still get database peer review from
+  platform/cloud when that team holds the main scalability, migration-safety,
+  and operational design expertise
+- platform should step in for new shared capabilities, exceptional tuning,
+  partitioning strategy, major incident support, or cases where one team's
+  database choices create platform-wide risk
+
+The practical default is shared infrastructure with service-local ownership:
+one shared Aurora cluster can be fine, but each service still needs its own
+database allocation, users, migration artifacts, and operational
+accountability.
+
+Do not blur this boundary:
+
+- platform should not quietly become the long-term owner of product schemas
+- peer review from platform is a quality and scalability gate, not a transfer
+  of day-to-day schema ownership
+- product teams should not bypass platform rules for auth, backup, restore,
+  connectivity, or migration safety
+- one service should not write directly into another service's tables as a
+  convenience integration pattern
 
 ## 5. Preferred Interaction Modes
 

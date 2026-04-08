@@ -20,8 +20,8 @@ early.
 
 ### 2.1 Start with flows and service tech design docs
 
-Keep the generic design method in this document, and require each substantial
-service to capture its concrete choices in a service-local tech design.
+Use this design method as the default, and require each substantial service to
+capture its concrete choices in a service-local tech design.
 
 Default design sequence:
 
@@ -38,6 +38,15 @@ A good reference service tech design usually follows this shape: requirements,
 deployment profiles, glossary, user stories, high-level architecture, then
 detailed workflow and state decisions.
 
+This matters even more when teams use AI coding agents. Agents are much more
+reliable when the service has a clear written spec for requirements, workflow
+flows, state transitions, contracts, and test expectations. If those things
+are missing, the agent will fill the gaps with plausible guesses, which is
+exactly how architecture drift and subtle behavior bugs get introduced.
+
+If teams are using AI coding agents regularly, also use
+[AI Coding]({{ '/ai-coding/' | relative_url }}).
+
 Documentation format and location defaults:
 
 - write service tech docs in Markdown
@@ -47,11 +56,18 @@ Documentation format and location defaults:
   wiki or slide deck that drifts out of date
 - update the docs in the same change when architecture, workflow, or public
   behavior materially changes
+- for meaningful service work, keep the main happy path, important failure
+  paths, retry behavior, state model, and test shape explicit enough that a new
+  engineer or an AI coding agent can implement against the document instead of
+  guessing
+- identify the critical test shape in the design, not just the code: which
+  behaviors need automated proof, which ones need integration or contract
+  coverage, and which deployed checks demonstrate that the service still works
 
 Do not create a separate organization-wide “software design process” document
 unless the design method grows large enough to need its own maintained
-standard. For now, it belongs here in the software guidelines, while each
-service should have its own concrete design doc.
+standard. Keep the design method here in the software guidance, while each
+service keeps its own concrete design doc.
 
 ### 2.2 Prefer clear bounded services over premature microservice sprawl
 
@@ -94,24 +110,24 @@ delivery lifecycle, for example:
 Do not split one service into multiple repos per runtime by default if those
 parts are developed, tested, released, and rolled back together.
 
+That does not mean one service has to be one package. A service repo can still
+use multiple internal packages, modules, or workspaces when that helps keep the
+codebase structured, as long as those packages still serve one deployable
+service boundary.
+
 Also do not put multiple unrelated domain services in one repo by default and
 then try to recreate isolation later in CI, release orchestration, or approval
 flows. If services need independent ownership, testing, release cadence, and
 rollback, the repo boundary should normally reflect that.
 
-A multi-service monorepo can still work, but only if the repository stops
-acting like the release boundary. If you want that model, treat
-[Monorepo]({{ '/monorepo/' | relative_url }}) as the entry criteria: advocates
-need to prove per-service build, test, deploy, rollback, and ownership
-isolation, not just assert that the tooling is flexible enough.
-
-The strongest case for a monorepo is usually atomic cross-service changes,
-shared tooling, and one place to search code and contracts. Those are real
-benefits. They only justify the model when service autonomy survives them.
+For the full repo-boundary decision, including when a multi-service monorepo is
+reasonable and what bar it has to meet, use
+[Repos]({{ '/repos/' | relative_url }}).
 
 Shared code is not a reason to collapse unrelated services into one repo. If a
 library is genuinely shared and has its own lifecycle, publish it as a shared
-package or keep it in a separately owned shared-code repo.
+package or keep it in a separately owned shared-code repo or shared-code
+monorepo.
 
 A well-structured service repo should follow this model: the API, worker,
 contracts, service-local docs, tests, and service-specific runtime code all
@@ -196,7 +212,11 @@ Bad candidates for shared libraries:
 Rules:
 
 - prefer narrow, stable libraries with clear ownership
-- version and release shared libraries intentionally
+- if a library is published or versioned independently, use semver and treat
+  compatibility changes honestly
+- if a library is only consumed inside one repo, you still need an explicit
+  compatibility and upgrade policy even if you are not publishing semver
+  releases
 - keep service business rules local to the service repo
 - extract a shared library only after duplication proves the abstraction, not
   before
@@ -456,108 +476,17 @@ includes:
 - `docs/testing/coverage-matrix.md`
 - `docs/testing/smoke-testing.md`
 
-## 8. Testing Expectations
+## 8. Testing
 
-Treat this section as the testing menu, not a demand that every service carry
-every test type on day one. The launch-readiness minimum bar is the smaller set
-that protects the real failure modes of the service.
+Testing is its own topic now.
 
-Every service should have:
+Use [Testing]({{ '/testing/' | relative_url }}) for:
 
-- unit tests for domain and adapter edge cases
-- integration tests for database and external adapter behavior
-- functional or end-to-end tests for critical user and operator flows
-- contract tests for important public APIs or events
-- smoke tests for deployed environments
-
-The test strategy should match the risk of the service. Queue-driven workflows,
-payments, and destructive mutations need stronger integration coverage than
-simple read APIs.
-
-Minimum launch-readiness bar:
-
-- automated tests for critical domain logic and negative paths
-- integration coverage for the database, queue, and external adapter behavior
-  that can lose data or duplicate side effects
-- smoke tests against the deployed service
-- contract checks for important public APIs or async payloads
-
-Recommended local test posture:
-
-- use fast unit tests as the default inner loop
-- use Docker Compose or an equivalent local orchestration layer when integration
-  or functional tests need real Postgres, queues, object storage, or other
-  stateful dependencies
-- keep local integration environments close enough to production behavior that
-  failures are meaningful, without reproducing every production concern locally
-
-CI expectations:
-
-- CI should run named, repeatable commands rather than bespoke shell logic in
-  many places
-- local hooks such as pre-commit or pre-push should reuse the same named
-  verification commands that CI uses where practical
-- pre-commit filters should include secret scanning so obvious credential leaks
-  are caught before they ever leave a developer machine
-- separate fast quality checks from slower integration and functional tiers so
-  failures are easier to interpret and rerun
-- every pull request should run the fast test layers needed to protect the
-  service, at minimum unit tests and the relevant contract checks
-- integration tests should run in CI for services where database, queue, or
-  external-adapter behavior is part of the risk profile
-- functional tests should exist for the highest-value workflows and should run
-  in CI or in a gated pre-release path
-- smoke tests should validate the deployed artifact in staging and production
-- in a multi-service monorepo, each service should expose its own named build,
-  unit-test, integration-test, and package commands
-- in a multi-service monorepo, CI should support service-scoped validation for
-  isolated changes and broader fan-out for shared-package or multi-service
-  changes
-
-Recommended CI layers:
-
-- quality or static analysis: formatting, linting, typechecking, dependency or
-  import-boundary checks, and other non-runtime safety checks
-- unit tests with coverage reporting
-- integration tests against real backing services where required
-- functional tests against a production-like local composition
-- environment smoke tests against staged or promoted deployments
-
-Coverage expectations:
-
-- track test coverage trends over time rather than using one vanity percentage
-  as the only quality signal
-- use coverage reporting to find untested critical paths, not to justify weak
-  tests
-- raise the bar on coverage and negative-path testing around workflow logic,
-  retries, authz, and destructive mutations
-- for pull requests, consider changed-line coverage or diff-aware coverage as a
-  stronger signal than repo-wide headline percentages alone
-
-Workflow coverage expectations:
-
-- for workflow-heavy services, maintain a coverage matrix in the repo that maps
-  important scenarios and invariants to test tiers
-- keep that matrix workflow-oriented rather than file-oriented
-- update it when workflow semantics or higher-tier coverage materially change
-
-Smoke-test expectations:
-
-- keep a lightweight smoke script that can run from a workstation, bastion, or
-  CI job without requiring the full repo build outputs
-- use smoke tests to answer “does the deployed service work end to end right
-  now?”, not as a substitute for deeper automated test tiers
-
-Performance and capacity validation:
-
-- load test critical request paths before declaring a service production ready
-  when latency, throughput, or cost matter materially
-- validate queue-worker throughput and backlog recovery on workflow-heavy
-  services
-- exercise autoscaling assumptions with realistic traffic or job pressure
-  rather than assuming default thresholds will behave well in production
-- add soak or endurance tests for services that keep long-lived state, expensive
-  caches, or heavy background loops
+- unit, integration, functional, contract, and smoke-test expectations
+- local and CI test posture
+- coverage expectations
+- workflow coverage matrices
+- performance and capacity validation
 
 ## 9. Default Platform Decisions
 
