@@ -1,8 +1,9 @@
 ---
+title: AWS Backend Service Design Guidelines
 permalink: /
 ---
 
-# Backend Service Design Guidelines
+# AWS Backend Service Design Guidelines
 
 These are my opinionated defaults for backend services that run in AWS and need
 to stay understandable, operable, and cost-aware as they grow.
@@ -35,6 +36,7 @@ high-level architecture. Application code is comparatively easier to fix.
 - [Auth]({{ '/auth/' | relative_url }})
 - [Software]({{ '/software/' | relative_url }})
 - [Infra]({{ '/infra/' | relative_url }})
+- [Team]({{ '/team-topologies/' | relative_url }})
 - [Ops]({{ '/ops/' | relative_url }})
 - [Database]({{ '/database/' | relative_url }})
 - [S3]({{ '/s3/' | relative_url }})
@@ -83,6 +85,8 @@ The default platform model is boring on purpose:
   one repository and you need explicit acceptance criteria instead of slogans.
 - Use Infra for deployment shape, security defaults, CI/CD, and platform
   choices.
+- Use Team Topologies for the platform/cloud versus product-team split and the
+  interaction model between them.
 - Use Networking for the VPC, subnet, NAT, endpoint, and bastion model.
 - Use Ops for observability, lifecycle, recovery, and operational standards.
 - Use Database and S3 when the service needs persistent storage decisions.

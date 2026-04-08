@@ -15,6 +15,9 @@ Observability, lifecycle, recovery, and incident posture live in
 [Ops]({{ '/ops/' | relative_url }}). This document focuses on platform
 shape, AWS primitives, security, delivery, cost, and tagging.
 
+The product-team versus platform/cloud ownership split lives in
+[Team Topologies]({{ '/team-topologies/' | relative_url }}).
+
 The diagram view of the VPC, subnet, NAT, endpoint, and bastion model lives in
 [Networking]({{ '/networking/' | relative_url }}).
 

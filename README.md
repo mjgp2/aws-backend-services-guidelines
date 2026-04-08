@@ -24,6 +24,7 @@ org.
   deployable backend services in one repository
 - [Auth](./auth.md): JWT, JWKS, gateway, and service-to-service auth defaults
 - [Infra](./infra.md): platform shape, messaging, security, CI/CD posture, cost, and AWS defaults
+- [Team Topologies](./team-topologies.md): platform/cloud versus product-team ownership, interaction modes, and the paved-road model
 - [Ops](./ops.md): observability, self-healing, lifecycle, recovery, and operational standards
 - [S3](./s3.md): S3 bucket design, storage classes, lifecycle policy, access patterns, and cost controls
 - [Software](./software.md): service boundaries, design workflow, request handling, async workflows, contracts, testing, and reliability rules
