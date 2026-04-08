@@ -29,7 +29,13 @@ Every service must emit:
   retries, failure rate, concurrency saturation
 - database health metrics: connection pressure, query latency, storage growth,
   vacuum or maintenance health where relevant
-- health endpoints: at minimum `/livez` and `/readyz`
+- health endpoints: at minimum `/livez` and `/readyz` (these are naming
+  conventions adopted from Kubernetes but work well for ECS too; in ECS, map
+  `/readyz` to the ALB target group health check — unhealthy means removed from
+  traffic — and `/livez` to the ECS container health check in the task
+  definition — unhealthy means the task is replaced; the two checks should
+  verify different things: readiness verifies the service can handle requests,
+  liveness verifies the process is not stuck)
 
 Tracing default:
 

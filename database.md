@@ -15,10 +15,10 @@ I default to it because most startup backends need:
 - mature tooling and operator familiarity
 - enough flexibility to support both product data and workflow coordination
 
-Aurora also gives a practical managed-service upside: storage and compute are
-decoupled, scaling readers and writers is easier than with self-managed
-PostgreSQL, and zero-ETL integrations give you a cleaner path into analytics
-without bolting bespoke pipelines onto the transactional database.
+Aurora also gives a practical managed-service upside: the storage layer is
+shared across writer and read replicas, scaling readers is easier than with
+self-managed PostgreSQL, and zero-ETL integrations give you a cleaner path into
+analytics without bolting bespoke pipelines onto the transactional database.
 
 A different datastore should be chosen only when the workload clearly does not
 fit PostgreSQL.
@@ -222,15 +222,20 @@ Normal boundary rules:
 ### 4.1 Treat the database as a precious shared dependency
 
 - use connection pooling
-- use RDS Proxy, PgBouncer, or an equivalent pooling layer when runtime
-  connection fan-out would otherwise put avoidable pressure on Aurora
+- use RDS Proxy or PgBouncer when runtime connection fan-out would otherwise
+  put avoidable pressure on Aurora; these are not equivalent choices when IAM
+  authentication is involved — RDS IAM auth tokens expire every `15` minutes;
+  RDS Proxy manages token refresh internally; PgBouncer does not, and without
+  external token-refresh logic, new connections will fail after the token
+  expires; prefer RDS Proxy for IAM-auth connection pooling unless the team is
+  prepared to own the token-refresh side-channel for PgBouncer
 - set per-query or per-operation timeouts
 - keep transactions short
 - avoid holding transactions open during network or object-storage I/O
 - measure slow queries early
 - prefer IAM-authenticated runtime connections in AWS when the platform already
-supports them; keep long-lived admin credentials limited to bootstrap,
-emergency access, or other cases that cannot use IAM auth
+  supports them; keep long-lived admin credentials limited to bootstrap,
+  emergency access, or other cases that cannot use IAM auth
 
 Aurora scales well, but it is still easy to overwhelm with poor query or
 connection behavior.
@@ -281,10 +286,11 @@ that change it.
 - a dedicated migration image or package is a good default when services are
   deployed from immutable images, because it makes the schema step versioned,
   auditable, and promotable through environments
-- Sqitch is a reasonable option when the team wants database-native change
-  management with explicit deploy, revert, and verify steps, but the exact tool
-  matters less than having a disciplined forward-only delivery model in normal
-  rollout paths
+- the exact tool matters less than having a disciplined forward-only delivery
+  model; common options include Flyway, Liquibase, golang-migrate, Alembic, and
+  Atlas depending on language and toolchain — Sqitch is a reasonable option
+  when the team wants database-native change management with explicit deploy,
+  revert, and verify steps
 
 If a migration cannot be run safely while older runtimes still exist, it needs
 a runbook and likely a phased design. Normal deploys should not depend on a
@@ -375,25 +381,30 @@ Consider another datastore when the dominant workload is:
 
 Even then, PostgreSQL may still remain the control-plane or metadata store.
 
-## 6.1 Redis and ElastiCache pattern: cache, ephemeral state, and coordination
+### 6.1 Redis / Valkey and ElastiCache pattern: cache, ephemeral state, and coordination
 
 If a service needs very fast key-value access, short-lived coordination state,
-or cache-backed read shedding, Redis through ElastiCache is a good companion
-pattern.
+or cache-backed read shedding, ElastiCache is a good companion pattern.
 
-Use Redis for cache, short-lived coordination, rate limits, sessions, and
-other state you can rebuild or afford to lose. Do not use it for durable
-product state, relational integrity, or anything that falls apart when cache
-entries disappear during eviction or failover. The mistake teams keep making is
-turning Redis into an unowned dumping ground for arbitrary application state
-and then acting surprised when missing invalidation rules become a production
+The guidance below applies equally to Redis OSS and Valkey.
+
+Use it for cache, short-lived coordination, rate limits, sessions, and other
+state you can rebuild or afford to lose. Do not use it for durable product
+state, relational integrity, or anything that falls apart when cache entries
+disappear during eviction or failover. The mistake teams keep making is turning
+the cache into an unowned dumping ground for arbitrary application state and
+then acting surprised when missing invalidation rules become a production
 incident.
+
+Security requirements: enable in-transit TLS, enable at-rest encryption, and
+configure AUTH tokens or RBAC where the engine and deployment model support
+them. The secure configuration must be explicit, not assumed.
 
 Keep Aurora PostgreSQL as the canonical source of truth unless the workload
 clearly says otherwise, and define cache fill, expiry, and invalidation rules
-up front instead of treating Redis as magic shared memory.
+up front instead of treating the cache as magic shared memory.
 
-## 6.2 Reporting and analytics pattern: Aurora zero-ETL to Redshift
+### 6.2 Reporting and analytics pattern: Aurora zero-ETL to Redshift
 
 If a service develops serious reporting or analytics requirements, prefer
 keeping Aurora PostgreSQL as the transactional source of truth and consider
@@ -414,7 +425,7 @@ replication is a hard requirement on day one, this is the wrong tool. Keep the
 replicated scope narrow and deliberate; Redshift is not your second
 operational database.
 
-## 6.3 Search pattern: OpenSearch as a derived search system
+### 6.3 Search pattern: OpenSearch as a derived search system
 
 If the product needs real full-text search, faceting, relevance tuning, or
 search-heavy read patterns that no longer fit PostgreSQL cleanly, OpenSearch is

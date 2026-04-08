@@ -393,7 +393,12 @@ Operational requirements when using Fargate Spot:
   `maximumPercent: 200` so replacement tasks can become healthy before old
   tasks are drained
 - graceful shutdown and ECS `stopTimeout` must leave enough time to finish or
-  safely release in-flight work
+  safely release in-flight work; the default `stopTimeout` is `30` seconds and
+  the maximum is `120` seconds — this is the entire window available for
+  graceful shutdown on a Spot interruption; Fargate Spot sends a SIGTERM with
+  no advance warning beyond what that signal provides, and SIGKILL follows when
+  the timeout expires; `30` seconds is very short for in-flight work cleanup
+  and should be raised deliberately
 - API deregistration delay should be at least as long as API shutdown drain
   delay
 - worker handlers must be idempotent and safe under interruption mid-flight
@@ -403,6 +408,16 @@ Example deployment pattern:
 - capacity-provider strategies may mix `FARGATE` and `FARGATE_SPOT`
 - reference services should keep an on-demand base and then burst with Spot
   rather than depending on Spot alone
+
+### 3.6.2 Consider Graviton (ARM) for Fargate cost reduction
+
+Fargate tasks can run on Graviton (`ARM64`) architecture. For most backend
+services, switching from `X86_64` to `ARM64` reduces Fargate compute costs by
+roughly `20%` with no change in functional behavior, as long as the container
+image is built for `linux/arm64`. This is one of the lowest-effort cost
+optimizations available for services already running on Fargate. Ensure
+multi-arch images are published or maintain an `arm64`-specific tag for
+Graviton-targeted services.
 
 ### 3.7 Let the shared infrastructure layer manage application tags and metadata
 

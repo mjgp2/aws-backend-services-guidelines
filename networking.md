@@ -106,6 +106,9 @@ This is the kind of explicit subnet planning I would recommend. The exact
 numbers can vary, but the important part is choosing them intentionally before
 the environment accretes dependencies.
 
+The subnet example below is for the `production` VPC (`10.8.0.0/16`). Apply
+the same pattern to each environment using its own VPC base address.
+
 | AZ | Public CIDR | Private-egress CIDR |
 | --- | --- | --- |
 | `us-east-1a` | `10.8.0.0/22` | `10.8.64.0/18` |
@@ -129,9 +132,11 @@ practical rule is simple: avoid pushing unnecessary bytes through NAT because
 it is expensive.
 
 - treat NAT posture as an explicit cost decision, not a default checkbox
-- use an S3 gateway endpoint by default so routine S3 traffic stays off NAT
+- use an S3 gateway endpoint by default; S3 gateway endpoints are free — there
+  is no hourly charge, no data processing fee, and no data transfer fee; they
+  only require a route table entry
 - add interface endpoints when they keep enough AWS API traffic off NAT to be
-  cheaper, or when the operational isolation is worth the extra cost
+  cheaper, or when the operational isolation is worth the extra cost; interface
 - NAT can still be the right answer when third-party systems or customer
   firewalls need a fixed outbound source IP to allowlist
 - a single shared NAT is often the right default for low-risk environments

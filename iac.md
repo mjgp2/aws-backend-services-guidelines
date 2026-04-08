@@ -206,10 +206,12 @@ Good defaults:
 - synth the target environment
 - diff the target environment when the change affects live stacks
 
-In the current `aws-infra` repo, that contract is expressed through commands
-such as `pnpm build`, `pnpm test`, `pnpm verify:pre-commit`,
-`pnpm verify:pre-push`, `pnpm verify:ci`, `cdk synth`, `cdk ls`, and
-`cdk diff`.
+A well-structured CDK repo should expose named commands for each verification
+step so that local development, pre-commit hooks, and CI invoke the same logic.
+The exact toolchain (pnpm, npm, make, etc.) matters less than the commands
+being named, documented, and consistently runnable from the local machine and
+from CI. Good examples: `build`, `test`, `verify:pre-commit`, `verify:ci`,
+`cdk synth`, `cdk ls`, and `cdk diff`.
 
 Review IaC changes like code changes, but with a higher bar for care. They can
 change live security boundaries, data posture, availability, and cost in one

@@ -12,13 +12,13 @@ Shared libraries, templates, and platform packages can live together in a
 separately owned shared-code repository or shared-code monorepo when that
 improves ownership and reuse without collapsing service release boundaries.
 
-A multi-service monorepo is a valid exception model when teams want
-atomic cross-service changes, shared tooling, and one place to discover code,
-contracts, and infrastructure.
+Some teams want a multi-service monorepo for atomic cross-service changes,
+shared tooling, and one place to discover code, contracts, and infrastructure.
 
-Those benefits are real. They are also not free. A monorepo is only a good fit
-when the platform can preserve service-level ownership, CI, release, rollback,
-and incident isolation even though the code shares one version-control root.
+Those benefits are real. They are also not free. In practice, a multi-service
+monorepo is only credible if the platform can preserve service-level
+ownership, CI, release, rollback, and incident isolation even though the code
+shares one version-control root.
 
 The guidance below is meant to help teams evaluate that choice honestly. If a
 multi-service repository cannot meet the required bar, it is still behaving

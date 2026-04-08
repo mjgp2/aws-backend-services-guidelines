@@ -504,14 +504,20 @@ the baseline unless a specific service has a documented reason to differ.
   cadence clearly diverge.
 - Do not jump to many networked services just to look “microservice-ready.”
 
-### 9.2 Use REST by default and add gRPC only for clear internal reasons
+### 9.2 Use REST by default; add gRPC or GraphQL only for clear reasons
 
 - Use REST for externally consumed services and ordinary backend APIs.
 - If services need synchronous HTTP communication inside one ECS environment,
   Service Connect is a good default transport and naming layer.
 - Add gRPC only when there is a specific internal need such as streaming,
   stricter service-to-service contracts, or performance-sensitive internal
-  chatter.
+  chatter; gRPC on ALB requires an HTTPS listener, the target group protocol
+  version set to `gRPC`, and HTTP/2 backends — this is not the default ALB
+  configuration and requires explicit setup.
+- Consider GraphQL for BFF (Backend for Frontend) layers and API aggregation
+  use cases where clients need flexible query shapes over multiple data
+  sources; AWS AppSync is the managed GraphQL option; self-hosted GraphQL
+  on ECS is also common.
 - Do not force mixed transports onto every service without a concrete benefit.
 
 ### 9.3 Prefer templates for scaffolding and libraries for stable shared runtime behavior

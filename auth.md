@@ -10,15 +10,13 @@ accept bearer JWTs signed by a trusted issuer.
 flowchart TD
     client["Authenticated client"]
     api["API runtime"]
-    jwks["JWKS document / public key set"]
     cache["In-process key cache"]
-    static["JWKS hosting"]
+    jwksendpoint["JWKS endpoint<br/>(issuer or static host)"]
     authz["Application / domain authorization"]
 
     client -->|Bearer JWT| api
     api --> cache
-    cache --> jwks
-    static --> jwks
+    cache -. "cache miss / unknown kid" .-> jwksendpoint
     api -->|issuer + audience + signature verified| authz
 ```
 
@@ -97,8 +95,12 @@ flowchart TD
 - Put step-up auth or MFA checks at the business-action boundary when some
   actions are materially higher risk than ordinary session-authenticated reads
   and writes.
-- Use IAM roles for AWS resource access, or mTLS / service tokens for direct
-  service-to-service authentication that does not represent an end user.
+- Use IAM roles for AWS resource access. For direct service-to-service HTTP
+  calls between internal services, AWS SigV4 request signing is the
+  AWS-native mechanism when the target is protected by IAM authorization
+  (for example, an API Gateway with `AWS_IAM` auth); mTLS or application
+  service tokens are the alternatives when SigV4 does not fit the transport
+  or the target is not IAM-protected.
 - Use private key-distribution paths only when network or regulatory posture
   requires them; public verification keys themselves do not need secrecy.
 

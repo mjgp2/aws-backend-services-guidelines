@@ -65,5 +65,5 @@ The default platform model is boring on purpose:
 - Use Delivery, Testing, and Ops for ship, verify, and run guidance.
 - Use IaC for AWS CDK TypeScript repo structure, service-owned infrastructure
   definitions, and infrastructure verification expectations.
-- Use the diagram pages for quick orientation, not as a substitute for the
-  written rules.
+- Use the diagrams embedded in Architecture, Networking, Auth, and Delivery
+  for quick orientation, not as a substitute for the written rules.

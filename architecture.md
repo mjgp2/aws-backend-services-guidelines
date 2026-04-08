@@ -10,11 +10,12 @@ service actually needs them.
 ```mermaid
 flowchart TD
     client["Client"]
-    waf["AWS WAF / Shield<br/>(shared, optional)"]
+    waf["AWS WAF<br/>(shared, optional)"]
     alb["ALB (shared)"]
     api["API runtime<br/>AWS Fargate"]
     worker["Worker runtime<br/>AWS Fargate"]
-    outbox[("Transactional outbox")]
+    outbox[("Transactional outbox<br/>(DB table)")]
+    outboxpub["Outbox publisher<br/>(poller process)"]
     db[("Aurora DB")]
     bucket[("S3 bucket")]
     workq[["SQS work queue"]]
@@ -23,6 +24,7 @@ flowchart TD
     eventsqdlq[["S3 event notifications DLQ"]]
     sns[["SNS topics"]]
     kds[["Kinesis Data Streams"]]
+    firehose["Amazon Data Firehose<br/>(or KCL consumer)"]
     lake[("S3 data lake")]
     redshift[("Amazon Redshift")]
     cfg["Config / secrets<br/>SSM + Secrets Manager"]
@@ -37,18 +39,20 @@ flowchart TD
     client -. "presigned upload / read" .-> bucket
     api --> db
     api --> outbox
-    outbox --> workq
+    outbox --> outboxpub
+    outboxpub --> workq
     api --> bucket
     api --> sns
     api --> kds
     bucket --> eventsq
     workq --> worker
-    workq --> workqdlq
+    workq -. "after max retries" .-> workqdlq
     eventsq --> worker
-    eventsq --> eventsqdlq
+    eventsq -. "after max retries" .-> eventsqdlq
     sns --> workq
     worker --> kds
-    kds --> lake
+    kds --> firehose
+    firehose --> lake
     lake -. "optional warehouse load" .-> redshift
     worker --> db
     worker --> bucket
@@ -67,16 +71,31 @@ flowchart TD
 
 ## Notes
 
-- The `API -> outbox -> SQS` path is the default reliable async publication
-  model when queued work depends on committed database state.
+- The `API -> outbox -> publisher -> SQS` path is the default reliable async
+  publication model when queued work depends on committed database state.
 - The point of the outbox is to avoid the classic split-brain failure where the
   database state change commits but the queue publish does not, or vice versa.
-- The default pattern is: commit business state and outbox record together,
-  then let a separate publisher drain the outbox with retries and alarms.
+- The default pattern is: commit business state and outbox record in the same
+  database transaction, then let a separate poller process drain the outbox
+  with retries and alarms. The outbox is a database table, not a separate
+  service — the publisher process is the piece that polls and enqueues.
 - Direct client upload and download against object storage should use
   authenticated control-plane decisions plus short-lived signed URLs.
 - DLQs are required for durable background processing and should have owners,
-  alarms, and runbooks.
+  alarms, and runbooks. Messages reach the DLQ only after exceeding the
+  configured `maxReceiveCount` on the source queue — they do not flow there
+  during normal operation.
+- Kinesis Data Streams does not write directly to S3. An intermediate delivery
+  layer is required: Amazon Data Firehose is the managed default for streaming
+  to a data lake; a KCL application or Lambda consumer is the alternative when
+  transformation or routing logic is needed.
+- SNS delivers to SQS subscriptions wrapped in a JSON envelope unless raw
+  message delivery is enabled on the subscription. Consumers of an
+  SNS-subscribed queue need to handle the envelope or enable raw delivery.
+- WAF and Shield are separate products. AWS Shield Standard is active on all
+  AWS accounts at no charge and requires no configuration. WAF is a separately
+  configured L7 firewall that is optional but becomes a practical default
+  quickly for public APIs facing internet abuse.
 - Kinesis, data lake, and Redshift are optional analytics branches, not part of
   the minimum runtime architecture.
 

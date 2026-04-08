@@ -39,6 +39,10 @@ simple read APIs.
 - use Docker Compose or an equivalent local orchestration layer when
   integration or functional tests need real Postgres, queues, object storage,
   or other stateful dependencies
+- for local AWS service emulation (S3, SQS, SNS, and others), LocalStack is
+  the widely used option; be aware it has fidelity limits — some AWS behaviors
+  differ from the real service, so high-risk integration paths should also run
+  against real AWS resources in a dedicated test environment
 - keep local integration environments close enough to production behavior that
   failures are meaningful, without reproducing every production concern locally
 
@@ -49,7 +53,8 @@ simple read APIs.
 - local hooks such as pre-commit or pre-push should reuse the same named
   verification commands that CI uses where practical
 - pre-commit filters should include secret scanning so obvious credential leaks
-  are caught before they ever leave a developer machine
+  are caught before they ever leave a developer machine; tools such as
+  Gitleaks or TruffleHog are reasonable options
 - separate fast quality checks from slower integration and functional tiers so
   failures are easier to interpret and rerun
 - every pull request should run the fast test layers needed to protect the
