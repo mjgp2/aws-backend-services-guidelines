@@ -478,8 +478,6 @@ includes:
 
 ## 8. Testing
 
-Testing is its own topic now.
-
 Use [Testing]({{ '/testing/' | relative_url }}) for:
 
 - unit, integration, functional, contract, and smoke-test expectations

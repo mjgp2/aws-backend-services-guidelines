@@ -12,22 +12,6 @@ including building systems in AWS since before there were VPCs.
 The expensive mistakes are usually boundaries, contracts, schemas, and
 architecture. Application code is comparatively easier to fix.
 
-- [Checklist]({{ '/new-service-checklist/' | relative_url }})
-- [Team]({{ '/team-topologies/' | relative_url }})
-- [Software]({{ '/software/' | relative_url }})
-- [AI Coding]({{ '/ai-coding/' | relative_url }})
-- [Architecture]({{ '/architecture/' | relative_url }})
-- [Auth]({{ '/auth/' | relative_url }})
-- [Database]({{ '/database/' | relative_url }})
-- [S3]({{ '/s3/' | relative_url }})
-- [Infra]({{ '/infra/' | relative_url }})
-- [IaC]({{ '/iac/' | relative_url }})
-- [Networking]({{ '/networking/' | relative_url }})
-- [Delivery]({{ '/delivery/' | relative_url }})
-- [Testing]({{ '/testing/' | relative_url }})
-- [Ops]({{ '/ops/' | relative_url }})
-- [Repos]({{ '/repos/' | relative_url }})
-
 ## Scope
 
 These guidelines target services that:

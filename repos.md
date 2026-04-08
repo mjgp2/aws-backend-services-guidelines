@@ -96,8 +96,8 @@ Recommended default:
 
 - keep each deployable service in its own repo
 - keep shared libraries, templates, and platform packages together in a
-  separately owned shared-code repo or shared-code monorepo when they share
-  ownership, tooling, and change-management needs
+  separately owned shared-code repo or shared-code monorepo when they have
+  shared ownership, tooling, and change-management needs
 - publish or version those shared packages intentionally
 
 This is usually a better fit than putting many independently deployable
@@ -107,9 +107,8 @@ Use a shared-code monorepo when:
 
 - several shared libraries or templates have the same owners
 - coordinated changes across those packages are common enough that one place
-  for testing, compatibility checks, and review improves engineering quality
-- one place to run library tests, compatibility checks, and release workflows
-  improves engineering quality
+  for testing, compatibility checks, release workflows, and review improves
+  engineering quality
 - the repo is clearly about shared code, not many product services pretending
   to be one platform
 
@@ -140,9 +139,9 @@ complexity.
 
 ### 4.2 Published Playbook Status
 
-As of April 7, 2026, I have not found a published, end-to-end playbook that I
-would treat as sufficient on its own for running multiple independently
-deployable backend services in one monorepo.
+I am not aware of a published, end-to-end playbook that is sufficient on its
+own for running multiple independently deployable backend services in one
+monorepo.
 
 I can point to partial tooling patterns:
 
