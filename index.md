@@ -56,6 +56,8 @@ The default platform model is boring on purpose:
   boundaries.
 - Use AI Coding for repository guidance, spec quality, and human-review
   boundaries when teams use AI coding agents.
+- Use Security for credentials, guardrails, image scanning, and account-level
+  security posture.
 - Use Repos when deciding between repo-per-service and a multi-service
   monorepo.
 - Use Architecture, Infra, Networking, Database, and S3 for the main technical

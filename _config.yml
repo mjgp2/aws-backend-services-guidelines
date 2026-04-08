@@ -19,6 +19,7 @@ header_pages:
   - architecture.md
   - software.md
   - auth.md
+  - security.md
   - database.md
   - s3.md
   - infra.md

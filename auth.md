@@ -106,5 +106,7 @@ flowchart TD
 
 - [Software]({{ '/software/' | relative_url }}): application authz, contracts, and
   API design defaults
+- [Security]({{ '/security/' | relative_url }}): credentials, secrets, and broader
+  security posture
 - [Infra]({{ '/infra/' | relative_url }}): service-to-service identity,
   secrets posture, and security defaults

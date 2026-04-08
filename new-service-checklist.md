@@ -110,5 +110,6 @@ is ready for first production launch.
 - [Database]({{ '/database/' | relative_url }})
 - [S3]({{ '/s3/' | relative_url }})
 - [Auth]({{ '/auth/' | relative_url }})
+- [Security]({{ '/security/' | relative_url }})
 - [Delivery]({{ '/delivery/' | relative_url }})
 - [Testing]({{ '/testing/' | relative_url }})

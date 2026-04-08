@@ -262,6 +262,7 @@ local change can alter the platform contract for many services at once.
 ## Related Guidance
 
 - [Infra]({{ '/infra/' | relative_url }}): platform defaults, AWS primitives, CI/CD, and security posture
+- [Security]({{ '/security/' | relative_url }}): secret scanning, image scanning, and account-level guardrails
 - [Networking]({{ '/networking/' | relative_url }}): VPC and ingress shape
 - [Delivery]({{ '/delivery/' | relative_url }}): artifact promotion, rollout, and migration ordering
 - [Team]({{ '/team-topologies/' | relative_url }}): platform versus product ownership boundaries

@@ -15,6 +15,9 @@ Observability, lifecycle, recovery, and incident posture live in
 [Ops]({{ '/ops/' | relative_url }}). This document focuses on platform
 shape, AWS primitives, security, delivery, cost, and tagging.
 
+Dedicated security posture guidance lives in
+[Security]({{ '/security/' | relative_url }}).
+
 The product-team versus platform/cloud ownership split lives in
 [Team]({{ '/team-topologies/' | relative_url }}).
 

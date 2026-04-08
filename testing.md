@@ -15,7 +15,7 @@ protects the real failure modes of the service.
 
 Every service should have:
 
-- unit tests for domain and adapter edge cases
+- unit tests for domain and adapter behavior, including edge cases
 - integration tests for database and external adapter behavior
 - functional or end-to-end tests for critical user and operator flows
 - contract tests for important public APIs or events
@@ -73,6 +73,9 @@ simple read APIs.
 - integration tests against real backing services where required
 - functional tests against a production-like local composition
 - environment smoke tests against staged or promoted deployments
+
+Detailed security posture guidance, including secret scanning expectations,
+lives in [Security]({{ '/security/' | relative_url }}).
 
 ## 4. Coverage Expectations
 
